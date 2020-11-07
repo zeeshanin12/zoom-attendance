@@ -8,17 +8,17 @@ def is_present (input) :
     else :
         return False
 
-parser=argparse.ArgumentParser()
+parser = argparse.ArgumentParser()
 
-parser.add_argument('--saved_chat_path', help='File path to the saved Zoom chat')
-parser.add_argument('--class_names_path', help='File path containing list of all students in the class')
-parser.add_argument('--output_file_path', help='File name of the output processed file')
+parser.add_argument('--saved_chat_path', help = 'File path to the saved Zoom chat')
+parser.add_argument('--class_names_path', help ='File path containing list of all students in the class')
+parser.add_argument('--output_file_path', help = 'File name of the output processed file')
 
-args=parser.parse_args()
+args = parser.parse_args()
 
 INPUT_FILE_PATH = args.saved_chat_path
 OUTPUT_FILE_PATH = args.output_file_path
-CLASS_NAME_FILE_PATH= args.class_names_path
+CLASS_NAME_FILE_PATH = args.class_names_path
 
 # Read input saved chat file.
 df = pd.read_csv (INPUT_FILE_PATH, header = None)
