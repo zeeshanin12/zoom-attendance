@@ -5,14 +5,13 @@ Download this code from : \
 
 This python program does some data processing on chats saved from Zoom. It parses the input text files, and finds the students to wrote "present". And then creates an output file that has a list of all the students with 1 marked is present and 0 is absent.
 
-This function takes the following 3 input arguments :
+This function takes the following input argument :
 
-1) ```--saved_chat_path``` : The saved zoom chat file path. This is the input file to process.
+```--saved_chat_directory``` : A directory path that contains the saved zoom chat files. All files named "meeting_saved_chat" in this directory will be processed.
 
-2) ```--class_names_path``` : File path containing list of all students in the class. The output list will have the names of all student in this file with attendance marked from the input file(--saved_chat_path).
+Once processed, these files will be as attendance.csv
 
-3) ```--output_file_name``` : File name of the output processed file. This file is saved in the directory from which the program is run.
 
 
 For example : \
-```python main.py --saved_chat_path ./saved_chat.txt --class_names_path ./class_10d.csv --output_file_name out.txt ```
+```python main.py --saved_chat_directory /Users/khanz/aisha-attendance/ ```
