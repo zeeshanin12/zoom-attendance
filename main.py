@@ -1,7 +1,7 @@
 import pandas as pd
 from re import search
 import argparse, sys
-# python main.py --saved_chat_path ./saved_chat.txt --output_file_path out.txt --class_names_path ./class_10d.csv
+# python main.py --saved_chat_path ./saved_chat.txt --output_file_name out.txt --class_names_path ./class_10d.csv
 def is_present (input) :
     if search("present", input) :
         return True
@@ -12,12 +12,12 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--saved_chat_path', help = 'File path to the saved Zoom chat')
 parser.add_argument('--class_names_path', help ='File path containing list of all students in the class')
-parser.add_argument('--output_file_path', help = 'File name of the output processed file')
+parser.add_argument('--output_file_name', help = 'File name of the output processed file')
 
 args = parser.parse_args()
 
 INPUT_FILE_PATH = args.saved_chat_path
-OUTPUT_FILE_PATH = args.output_file_path
+OUTPUT_FILE_NAME = args.output_file_name
 CLASS_NAME_FILE_PATH = args.class_names_path
 
 # Read input saved chat file.
@@ -58,4 +58,4 @@ joined_df.sort_index(inplace = True)
 print(joined_df)
 
 # Write the result to out tables.
-joined_df.to_csv(OUTPUT_FILE_PATH, index = True)
+joined_df.to_csv(OUTPUT_FILE_NAME, index = True)
