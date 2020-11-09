@@ -1,5 +1,8 @@
 # zoom-attendance
 
+Download this code from : \
+```git clone https://github.com/zeeshanin12/zoom-attendance.git```
+
 This python program does some data processing on chats saved from Zoom. It parses the input text files, and finds the students to wrote "present". And then creates an output file that has a list of all the students with 1 marked is present and 0 is absent.
 
 This function takes the following 3 input arguments :
