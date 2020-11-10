@@ -4,46 +4,49 @@ from re import search
 import argparse, sys
 
 #python main.py --saved_chat_directory /Users/khanz/aisha-attendance/ --output_file_name out.csv
-
+# python main.py --saved_chat_directory ./zoom/
 def is_present (input) :
-    if search("present", input) :
+    if search("present", str(input)) :
         return True
     else :
         return False
 
-def post_process(joined_df) :
-    joined_df = joined_df.fillna(0).astype(int)
-    joined_df.index = joined_df.index.str.title()
-    joined_df.sort_index(inplace = True)
-    return joined_df
-
-def join_files(INPUT_FILE_PATH, student_names):
+def join_files(SAVED_CHAT_PATH, STUDENT_NAMES_PATH):
     # Read input saved chat file.
-    df = pd.read_csv (INPUT_FILE_PATH, header = None)
+    saved_chat_df= pd.read_csv (SAVED_CHAT_PATH, header = None)
     # Do some pre-processing.
-    df.columns = ['line']
-    lines = df["line"].str.split("\t From ").str[1]
-    l = lines.apply(lambda e : e.split(' : '))
-    df['name'] =  l.str[0].apply(lambda e : e[1:].lower())
-    df['message'] =  l.str[1].apply(lambda e : e.lower())
+    saved_chat_df.columns = ['line']
+    saved_chat_df["line"] = saved_chat_df["line"].str.split("\t From ").str[1]
+    saved_chat_df = saved_chat_df.dropna()
 
-    present_rows = df[df['message'].apply(lambda e : is_present(e))].copy()
+    l = saved_chat_df['line'].apply(lambda e : e.split(' : '))
+    saved_chat_df['name'] =  l.str[0].apply(lambda e : e[1:].lower())
+    #
+    saved_chat_df['message'] =  l.str[1].apply(lambda e : e.lower())
 
+    present_rows = saved_chat_df[saved_chat_df['message'].apply(lambda e : is_present(e))].copy()
     present_rows["is_present"]  = present_rows["message"].apply(lambda e : 1)
+    present_rows['name'] = present_rows['name'].apply(lambda e : e.replace("to  aisha qureshi(privately)"," "))
+    present_rows['name'] = present_rows['name'].str.strip()
+    present_rows.drop(columns=['line', 'message'], inplace=True)
     present_rows.drop_duplicates(inplace = True)
+    #print(present_rows)
     present_rows = present_rows[["name", "is_present"]].set_index('name')
 
     # Read class names file
-    class_names = pd.read_csv (student_names, header = None)
-
+    class_names = pd.read_csv (STUDENT_NAMES_PATH, header = None)
     # Do some pre-processing on the dataframe.
     class_names.columns = ['name']
+    class_names["name"] = class_names["name"].str.strip()
     class_names["name"] = class_names["name"].apply(lambda e : e.lower())
     class_names = class_names.set_index('name')
 
     # Join the 2 dataframes.
-    joined_df = post_process(class_names.join(present_rows, how="outer", on="name"))
-    left_joined_df = post_process(class_names.join(present_rows, how="left", on="name"))
+    joined_df = class_names.join(present_rows, how="outer", on="name")
+    joined_df['is_present'] = joined_df['is_present'].fillna(0).astype(int)
+
+    left_joined_df = class_names.join(present_rows, how="left", on="name")
+    left_joined_df['is_present'] = left_joined_df['is_present'].fillna(0).astype(int)
     # Do some post processing
     matches = left_joined_df["is_present"].sum()
 
@@ -58,14 +61,14 @@ def get_max_join(filepath):
             ]
     matches_list = []
     joined_df_list = []
-    for student_names in student_list :
-        matches, joined_df = join_files(filepath, student_names)
+    for STUDENT_NAMES_PATH in student_list :
+        matches, joined_df = join_files(filepath, STUDENT_NAMES_PATH)
         matches_list.append(matches)
         joined_df_list.append(joined_df)
 
-    max_joins_df = joined_df_list[matches_list.index(min(matches_list))]
+    max_matches = max(matches_list)
+    max_joins_df = joined_df_list[matches_list.index(max_matches)]
     return(max_joins_df)
-
 
 parser = argparse.ArgumentParser()
 
@@ -79,11 +82,15 @@ SAVED_CHAT_DIR = args.saved_chat_directory
 for subdir, dirs, files in os.walk(SAVED_CHAT_DIR):
     for filename in files:
         filepath = subdir + os.sep + filename
-        if filepath.endswith("meeting_saved_chat"):
+        if filepath.endswith("meeting_saved_chat.txt"):
             print ("Processing file : " + filepath)
             df = get_max_join(filepath)
-
-            output_file_name = filepath.replace("meeting_saved_chat", "attendance.csv")
+            df.index = df.index.str.title()
+            df.sort_index(inplace = True)
+            df.reset_index(inplace=True)
+            df.drop_duplicates(inplace = True)
+            print(df)
+            output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance.csv")
             print ("Writing output to file : " + output_file_name)
             # Write the result to out tables.
-            df.to_csv(output_file_name, index = True)
+            df.to_csv(output_file_name, index = False)

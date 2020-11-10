@@ -14,4 +14,4 @@ Once processed, these files will be as attendance.csv
 
 
 For example : \
-```python main.py --saved_chat_directory /Users/khanz/aisha-attendance/ ```
+```python main.py --saved_chat_directory C:\Users\REEBA\Documents\Zoom ```
