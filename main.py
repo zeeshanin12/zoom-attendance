@@ -44,14 +44,7 @@ def join_files(SAVED_CHAT_PATH, STUDENT_NAMES_PATH):
     # Join the 2 dataframes.
     joined_df = class_names.join(present_rows, how="outer", on="name")
     joined_df['is_present'] = joined_df['is_present'].fillna(0).astype(int)
-    joined_df.reset_index(inplace=True)
-    #joined_df = joined_df[["name", "is_present"]]
-    joined_df["name"] = joined_df["name"].str.title()
-    #df.index = df.index.str.title()
-    #df.sort_index(inplace = True)
-    joined_df = joined_df.sort_values(by=['name'])
-
-
+    # (joined_df)
     left_joined_df = class_names.join(present_rows, how="left", on="name")
     left_joined_df['is_present'] = left_joined_df['is_present'].fillna(0).astype(int)
     # Do some post processing
@@ -92,6 +85,14 @@ for subdir, dirs, files in os.walk(SAVED_CHAT_DIR):
         if filepath.endswith("meeting_saved_chat.txt"):
             print ("Processing file : " + filepath)
             df = get_max_join(filepath)
+            df.reset_index(inplace=True)
+            df = df[["name", "is_present"]].copy()
+            df["name"] = df["name"].str.title()
+            #df.index = df.index.str.title()
+            #df.sort_index(inplace = True)
+            df = df.sort_values(by=['name'])
+            #
+            #df.drop_duplicates(inplace = True)
             print df
             output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance.csv")
             print ("Writing output to file : " + output_file_name)
