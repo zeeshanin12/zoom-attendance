@@ -83,18 +83,22 @@ for subdir, dirs, files in os.walk(SAVED_CHAT_DIR):
     for filename in files:
         filepath = subdir + os.sep + filename
         if filepath.endswith("meeting_saved_chat.txt"):
-            print ("Processing file : " + filepath)
-            df = get_max_join(filepath)
+            try :
+                print ("Processing file : " + filepath)
+                df = get_max_join(filepath)
 
-            df.reset_index(inplace=True)
-            df = df[["name", "is_present"]]
-            df["name"] = df["name"].str.title()
-            df = df.sort_values(by=['name'])
-            df.drop_duplicates(inplace = True)
+                df.reset_index(inplace=True)
+                df = df[["name", "is_present"]]
+                df["name"] = df["name"].str.title()
+                df = df.sort_values(by=['name'])
+                df.drop_duplicates(inplace = True)
 
-            print (df)
+                print (df)
 
-            output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance.csv")
-            print ("Writing output to file : " + output_file_name)
-            # Write the result to out tables.
-            df.to_csv(output_file_name, index = False)
+                output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance.csv")
+                print ("Writing output to file : " + output_file_name)
+                # Write the result to out tables.
+                df.to_csv(output_file_name, index = False)
+            except Exception as e :
+                print ("FAILED to process file " + filepath)
+                print (str(e))
