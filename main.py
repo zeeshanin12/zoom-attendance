@@ -13,7 +13,7 @@ def is_present (input) :
 
 def join_files(SAVED_CHAT_PATH, STUDENT_NAMES_PATH):
     # Read input saved chat file.
-    saved_chat_df= pd.read_csv (SAVED_CHAT_PATH, header = None)
+    saved_chat_df= pd.read_csv(SAVED_CHAT_PATH, header = None, delimiter = '\n')
     # Do some pre-processing.
     saved_chat_df.columns = ['line']
     saved_chat_df["line"] = saved_chat_df["line"].str.split("\t From ").str[1]
