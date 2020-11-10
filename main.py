@@ -85,15 +85,15 @@ for subdir, dirs, files in os.walk(SAVED_CHAT_DIR):
         if filepath.endswith("meeting_saved_chat.txt"):
             print ("Processing file : " + filepath)
             df = get_max_join(filepath)
+
             df.reset_index(inplace=True)
-            df = df[["name", "is_present"]].copy()
+            df = df[["name", "is_present"]]
             df["name"] = df["name"].str.title()
-            #df.index = df.index.str.title()
-            #df.sort_index(inplace = True)
             df = df.sort_values(by=['name'])
-            #
-            #df.drop_duplicates(inplace = True)
-            print df
+            df.drop_duplicates(inplace = True)
+
+            print (df)
+
             output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance.csv")
             print ("Writing output to file : " + output_file_name)
             # Write the result to out tables.
