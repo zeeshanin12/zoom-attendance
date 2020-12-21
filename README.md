@@ -5,13 +5,17 @@ Download this code from : \
 
 Change directory ```cd zoom-attendance```
 
-This python program does some data processing on chats saved from Zoom. It parses the input text files, and finds the students to wrote "present". And then creates an output file that has a list of all the students with 1 marked is present and 0 is absent.
+This python program does some data processing on chats saved from Zoom. It parses
+the input text files, and finds the students to wrote "present". And then creates
+an output file that has a list of all the students with 1 marked is present
+and 0 is absent.
 
 This function takes the following input argument :
 
-```--saved_chat_directory``` : A directory path that contains the saved zoom chat files. All files named "meeting_saved_chat" in this directory will be processed.
+```--saved_chat_directory``` : A directory path that contains the saved zoom
+chat files. All files named "meeting_saved_chat" in this directory will be processed.
 
-Once processed, these files will be as attendance.csv
+Once processed, these files will be as attendance_new.csv
 
 
 

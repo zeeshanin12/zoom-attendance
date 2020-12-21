@@ -16,21 +16,20 @@ def join_files(SAVED_CHAT_PATH, STUDENT_NAMES_PATH):
     saved_chat_df= pd.read_csv(SAVED_CHAT_PATH, header = None, delimiter = '\n')
     # Do some pre-processing.
     saved_chat_df.columns = ['line']
-    saved_chat_df["line"] = saved_chat_df["line"].str.split("\t From ").str[1]
-    saved_chat_df = saved_chat_df.dropna()
+    saved_chat_df["line"] = saved_chat_df["line"].apply(lambda e : e.lower())
+    saved_chat_df['line'] = saved_chat_df['line'].apply(lambda e : e.replace("to  aisha qureshi(privately)",""))
+    saved_chat_df['line'] = saved_chat_df['line'].apply(lambda e : e.replace("to  aisha qureshi(direct message)",""))
 
     l = saved_chat_df['line'].apply(lambda e : e.split(' : '))
-    saved_chat_df['name'] =  l.str[0].apply(lambda e : e[1:].lower())
-    #
-    saved_chat_df['message'] =  l.str[1].apply(lambda e : e.lower())
+    saved_chat_df['name'] =  l.str[0].str.split(" from ").str[1].str.strip()
+    saved_chat_df['message'] =  l.str[1].str.strip()
+    saved_chat_df = saved_chat_df.dropna()
 
     present_rows = saved_chat_df[saved_chat_df['message'].apply(lambda e : is_present(e))].copy()
     present_rows["is_present"]  = present_rows["message"].apply(lambda e : 1)
-    present_rows['name'] = present_rows['name'].apply(lambda e : e.replace("to  aisha qureshi(privately)"," "))
-    present_rows['name'] = present_rows['name'].str.strip()
     present_rows.drop(columns=['line', 'message'], inplace=True)
     present_rows.drop_duplicates(inplace = True)
-    #print(present_rows)
+
     present_rows = present_rows[["name", "is_present"]].set_index('name')
 
     # Read class names file
@@ -89,16 +88,16 @@ for subdir, dirs, files in os.walk(SAVED_CHAT_DIR):
 
                 df.reset_index(inplace=True)
                 df = df[["name", "is_present"]]
+
                 df["name"] = df["name"].str.title()
                 df = df.sort_values(by=['name'])
                 df.drop_duplicates(inplace = True)
-
-                print (df)
-
-                output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance.csv")
+                print(df)
+                output_file_name = filepath.replace("meeting_saved_chat.txt", "attendance_new.csv")
                 print ("Writing output to file : " + output_file_name)
                 # Write the result to out tables.
                 df.to_csv(output_file_name, index = False)
+
             except Exception as e :
                 print ("FAILED to process file " + filepath)
                 print (str(e))
